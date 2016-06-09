@@ -1,0 +1,16 @@
+[
+{
+  "modid": "randomrestockablecrates",
+  "name": "Rando Restockable Crates",
+  "description": "It allows to place special crates in creative that will have random loot that will restock.",
+  "version": "1.0.0",
+  "mcversion": "1.8.9",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Iskall85, Scalda, Winter_Grave"],
+  "credits": "Iskall85 and Team",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
