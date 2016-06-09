@@ -1,0 +1,21 @@
+{
+	"forge_marker": 1,
+	"variants": {
+		"facing=east": {
+			"model": "randomrestockablecrates:BlockCrate",
+			"y": 270
+		},
+		"facing=south": {
+			"model": "randomrestockablecrates:BlockCrate",
+			"y": 0
+		},
+		"facing=west": {
+			"model": "randomrestockablecrates:BlockCrate",
+			"y": 90
+		},
+		"facing=north": {
+			"model": "randomrestockablecrates:BlockCrate",
+			"y": 180
+		}
+    }
+}
