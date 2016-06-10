@@ -1,18 +1,15 @@
 package zairus.randomrestockablecrates.proxy;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import zairus.randomrestockablecrates.block.RRCBlock;
 
 public class CommonProxy
 {
-	public static final Minecraft mc = Minecraft.getMinecraft();
-	
 	public void preInit(FMLPreInitializationEvent e)
 	{
 		;
@@ -41,22 +38,22 @@ public class CommonProxy
 	{
 	}
 	
-	public void registerBlock(RRCBlock block)
+	public void registerBlock(Block block, String modName)
 	{
-		registerBlock(block, false);
+		registerBlock(block, false, modName);
 	}
 	
-	public void registerBlock(RRCBlock block, boolean model)
+	public void registerBlock(Block block, boolean model, String modName)
 	{
-		registerBlock(block, ItemBlock.class, model);
+		registerBlock(block, ItemBlock.class, model, modName);
 	}
 	
-	public void registerBlock(RRCBlock block, Class <? extends ItemBlock> clazz, boolean model)
+	public void registerBlock(Block block, Class <? extends ItemBlock> clazz, boolean model, String modName)
 	{
-		GameRegistry.registerBlock(block, clazz, block.getModName());
+		GameRegistry.registerBlock(block, clazz, modName);
 	}
 	
-	public void registerBlockModel(RRCBlock block, int metadata)
+	public void registerBlockModel(Block block, int metadata, String modName)
 	{
 	}
 }

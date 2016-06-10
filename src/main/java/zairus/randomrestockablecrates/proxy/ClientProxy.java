@@ -1,5 +1,7 @@
 package zairus.randomrestockablecrates.proxy;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -10,6 +12,8 @@ import zairus.randomrestockablecrates.block.RRCBlock;
 
 public class ClientProxy extends CommonProxy
 {
+	public static final Minecraft mc = Minecraft.getMinecraft();
+	
 	@Override
 	public void preInit(FMLPreInitializationEvent e)
 	{
@@ -38,29 +42,29 @@ public class ClientProxy extends CommonProxy
 	public void registerItemModel(Item item, int meta)
 	{
 		String itemId = RRCConstants.MODID + ":"; // + item.getModName();
-		CommonProxy.mc.getRenderItem().getItemModelMesher().register(item, meta, new ModelResourceLocation(itemId, "inventory"));
+		mc.getRenderItem().getItemModelMesher().register(item, meta, new ModelResourceLocation(itemId, "inventory"));
 	}
 	
 	@Override
 	public void registerItemModel(Item item, int meta, String texture)
 	{
 		String itemId = RRCConstants.MODID + ":" + texture;
-		CommonProxy.mc.getRenderItem().getItemModelMesher().register(item, meta, new ModelResourceLocation(itemId, "inventory"));
+		mc.getRenderItem().getItemModelMesher().register(item, meta, new ModelResourceLocation(itemId, "inventory"));
 	}
 	
-	public void registerBlockModel(RRCBlock block)
+	public void registerBlockModel(RRCBlock block, String modName)
 	{
-		registerBlockModel(block, 0);
+		registerBlockModel(block, 0, modName);
 	}
 	
 	@Override
-	public void registerBlockModel(RRCBlock block, int meta)
+	public void registerBlockModel(Block block, int meta, String modName)
 	{
 		Item item = Item.getItemFromBlock(block);
 		
 		if (item != null)
 		{
-			registerItemModel(item, meta, block.getModName());
+			registerItemModel(item, meta, modName);
 		}
 	}
 }

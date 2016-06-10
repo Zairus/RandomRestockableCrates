@@ -3,12 +3,14 @@ package zairus.randomrestockablecrates;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import zairus.randomrestockablecrates.block.RRCBlocks;
+import zairus.randomrestockablecrates.gui.GuiHandler;
 import zairus.randomrestockablecrates.proxy.CommonProxy;
 
 @Mod(modid = RRCConstants.MODID, name = RRCConstants.NAME, version = RRCConstants.VERSION)
@@ -27,6 +29,8 @@ public class RandomRestockableCrates
 	{
 		logger = event.getModLog();
 		
+		RRCConfig.init(event.getSuggestedConfigurationFile());
+		
 		RRCBlocks.init();
 		
 		RandomRestockableCrates.proxy.preInit(event);
@@ -38,6 +42,8 @@ public class RandomRestockableCrates
 		RRCBlocks.initModels();
 		
 		RandomRestockableCrates.proxy.init(event);
+		
+		NetworkRegistry.INSTANCE.registerGuiHandler(RandomRestockableCrates.instance, new GuiHandler());
 	}
 	
 	@EventHandler
