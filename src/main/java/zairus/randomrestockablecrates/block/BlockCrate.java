@@ -32,10 +32,12 @@ public class BlockCrate extends BlockContainer
 		super(Material.wood);
 		this.setCreativeTab(CreativeTabs.tabDecorations);
 		this.setStepSound(soundTypeWood);
-		this.setResistance(0.7F);
+		this.setResistance(6000000.0F);
 		this.setHardness(1.9F);
 		this.setHarvestLevel("axe", 0);
 		this.setBlockBounds(0.08F, 0.0F, 0.08F, 0.93F, 0.93F, 0.93F);
+		
+		this.setBlockUnbreakable();
 	}
 	
 	@Override

@@ -1,22 +1,36 @@
 package zairus.randomrestockablecrates.tileentity;
 
+import java.util.Random;
+
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.INetHandlerPlayClient;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.ITickable;
+import zairus.randomrestockablecrates.RRCConfig;
+import zairus.randomrestockablecrates.RandomRestockableCrates;
+import zairus.randomrestockablecrates.event.RRCEventHandler;
 import zairus.randomrestockablecrates.inventory.ContainerCrate;
 
 public class TileEntityCrate extends TileEntityLockable implements ITickable, IInventory
 {
-	private ItemStack[] chestContents = new ItemStack[9];
 	public int playersUsing;
+	
+	private ItemStack[] chestContents = new ItemStack[9];
 	private String customName;
+	private int lastOpened;
 	
 	public String getDefaultName()
 	{
@@ -150,6 +164,62 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			this.worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
 			this.worldObj.notifyNeighborsOfStateChange(this.pos.down(), this.getBlockType());
 		}
+		
+		this.lastOpened = RRCEventHandler.restockTicks;
+		updateMe();
+	}
+	
+	private void restock(Random rand)
+	{
+		boolean addedItem = false;
+		
+		for (int i = 0; i < this.chestContents.length; ++i)
+		{
+			this.chestContents[i] = null;
+			if (rand.nextInt(6) == 0)
+			{
+				addedItem = true;
+				this.chestContents[i] = getStackFromPool(RRCConfig.crateTier1, rand);
+			}
+		}
+		
+		if (!addedItem)
+		{
+			this.chestContents[rand.nextInt(this.chestContents.length)] = getStackFromPool(RRCConfig.crateTier1, rand);
+		}
+	}
+	
+	private ItemStack getStackFromPool(NBTTagList list, Random rand)
+	{
+		ItemStack stack = null;
+		
+		NBTTagCompound curElement = list.getCompoundTagAt(rand.nextInt(list.tagCount()));
+		
+		if (curElement != null)
+		{
+			int amount = curElement.getInteger("max") - curElement.getInteger("min");
+			amount = rand.nextInt(amount + 1) + curElement.getInteger("min");
+			if (amount == 0)
+				amount = 1;
+			
+			stack = new ItemStack(Item.getByNameOrId(curElement.getString("itemId")), amount, curElement.getInteger("meta"));
+			
+			NBTTagCompound tag = null;
+			
+			if (curElement.hasKey("NBTData") && curElement.getString("NBTData") != null && curElement.getString("NBTData").length() > 0)
+			{
+				try {
+					tag = JsonToNBT.getTagFromJson(curElement.getString("NBTData"));
+				} catch (NBTException e) {
+					RandomRestockableCrates.logger.info("Erorr in stack [" + curElement.getString("NBTData") + "]:" + e.toString());
+				}
+				
+				if (tag != null)
+					stack.setTagCompound(tag);
+			}
+		}
+		
+		return stack;
 	}
 	
 	@Override
@@ -255,7 +325,23 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	@Override
 	public void update()
 	{
-		;
+		int ticksEllapsed = RRCEventHandler.restockTicks - this.lastOpened;
+		
+		if (ticksEllapsed >= RRCConfig.tier1RestockTime || this.lastOpened == 0)
+		{
+			this.lastOpened = RRCEventHandler.restockTicks;
+			updateMe();
+			
+			this.worldObj.playSound(
+					this.getPos().getX(), 
+					this.getPos().getY(), 
+					this.getPos().getZ(), 
+					"randomrestockablecrates:crate_open", 
+					1.0f, 1.2f / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f), 
+					true);
+			
+			restock(this.worldObj.rand);
+		}
 	}
 	
 	@Override
@@ -277,5 +363,34 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		super.invalidate();
 		this.updateContainingBlockInfo();
+	}
+	
+	@Override
+	public Packet<INetHandlerPlayClient> getDescriptionPacket()
+	{
+		NBTTagCompound syncData = new NBTTagCompound();
+		writeSyncableDataToNBT(syncData);
+		return new S35PacketUpdateTileEntity(this.getPos(), 1, syncData);
+	}
+	
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+	{
+		readSyncableDataFromNBT(pkt.getNbtCompound());
+	}
+	
+	protected void writeSyncableDataToNBT(NBTTagCompound syncData)
+	{
+		syncData.setInteger("lastOpened", this.lastOpened);
+	}
+	
+	protected void readSyncableDataFromNBT(NBTTagCompound syncData)
+	{
+		this.lastOpened = syncData.getInteger("lastOpened");
+	}
+	
+	private void updateMe()
+	{
+		this.worldObj.markBlockForUpdate(this.getPos());
 	}
 }
