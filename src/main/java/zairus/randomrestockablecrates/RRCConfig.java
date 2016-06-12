@@ -34,9 +34,24 @@ public class RRCConfig
 		tier4RestockTime = config.getInt("tier4RestockTime", "CRATE_RESTOCK_TIMES", tier4RestockTime, 10, 300000, "Ticks for tier 4 crate.");
 		
 		config.setCategoryComment("TIER1_POOL", "Pool configuration for tier 1 crates.");
+		int tier1Elements = config.getInt("totalElements", "TIER1_POOL", 2, 1, 1000, "Total number of elements(items) on tier 1 pool.");
+		crateTier1 = getDefaultTagList(tier1Elements, "TIER1_POOL", "minecraft:wooden_sword");
 		
-		int tier1Elements = config.getInt("totalElements", "TIER1_POOL", 4, 1, 1000, "Total number of elements(items) on this pool.");
+		config.setCategoryComment("TIER2_POOL", "Pool configuration for tier 2 crates.");
+		int tier2Elements = config.getInt("totalElements", "TIER2_POOL", 2, 1, 1000, "Total number of elements(items) on tier 2 pool.");
+		crateTier2 = getDefaultTagList(tier2Elements, "TIER2_POOL", "minecraft:stone_sword");
 		
+		config.setCategoryComment("TIER3_POOL", "Pool configuration for tier 3 crates.");
+		int tier3Elements = config.getInt("totalElements", "TIER3_POOL", 2, 1, 1000, "Total number of elements(items) on tier 3 pool.");
+		crateTier3 = getDefaultTagList(tier3Elements, "TIER3_POOL", "minecraft:iron_sword");
+		
+		config.setCategoryComment("TIER4_POOL", "Pool configuration for tier 4 crates.");
+		int tier4Elements = config.getInt("totalElements", "TIER4_POOL", 2, 1, 1000, "Total number of elements(items) on tier 4 pool.");
+		crateTier4 = getDefaultTagList(tier4Elements, "TIER4_POOL", "minecraft:diamond_sword");
+		
+		config.save();
+		
+		/*
 		for (int i = 0; i < tier1Elements; ++i)
 		{
 			int weight = config.getInt("weight_item" + i, "TIER1_POOL", 1, 1, 20, "Weight for generation on crate.");
@@ -55,134 +70,35 @@ public class RRCConfig
 			item.setString("NBTData", nbt);
 			crateTier1.appendTag(item);
 		}
-		/*
-		crateTier1 = tier1Default();
-		NBTTagCompound tier1 = new NBTTagCompound();
-		tier1.setTag("tier1", crateTier1);
-		String tier1String = config.getString("Tier1Pool", "CRATE_TIERS", tier1.toString(), "Defines the item pool to choose from for crater tiers");
-		
-		try {
-			crateTier1 = JsonToNBT.getTagFromJson(tier1String).getTagList("tier1", Constants.NBT.TAG_COMPOUND);
-		} catch (NBTException e) {
-		}
 		*/
-		config.save();
 	}
-	/*
-	public static NBTTagList tier1Default()
+	
+	private static NBTTagList getDefaultTagList(int elements, String category, String default_item)
 	{
-		NBTTagList tier1Default = new NBTTagList();
-		NBTTagCompound item;
+		NBTTagList list = new NBTTagList();
 		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:leather_helmet");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
+		if (default_item == "")
+			default_item = "minecraft:stone_sword";
 		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:leather_boots");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
+		for (int i = 0; i < elements; ++i)
+		{
+			int weight = config.getInt("weight_item" + i, category, 1, 1, 20, "Weight for generation on crate.");
+			String itemId = config.getString("itemId_item" + i, category, default_item, "Named item id.");
+			int min = config.getInt("min_item" + i, category, 0, 0, 64, "Minimum count for the item stack.");
+			int max = config.getInt("max_item" + i, category, 1, 1, 64, "Maximum count for the item stack.");
+			int meta = config.getInt("meta_item" + i, category, 0, 0, 64, "Metadata for the item.");
+			String nbt = config.getString("nbt_item" + i, category, "", "Additional NBT Data for the item.");
+			
+			NBTTagCompound item = new NBTTagCompound();
+			item.setInteger("weight", weight);
+			item.setString("itemId", itemId);
+			item.setInteger("min", min);
+			item.setInteger("max", max);
+			item.setInteger("meta", meta);
+			item.setString("NBTData", nbt);
+			list.appendTag(item);
+		}
 		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:leather_chestplate");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:stone_sword");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:wooden_sword");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:potion");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 5);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:experience_bottle");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:arrow");
-		item.setInteger("min", 0);
-		item.setInteger("max", 4);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:string");
-		item.setInteger("min", 0);
-		item.setInteger("max", 6);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:stick");
-		item.setInteger("min", 0);
-		item.setInteger("max", 6);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "minecraft:enchanted_book");
-		item.setInteger("min", 0);
-		item.setInteger("max", 1);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "{StoredEnchantments:[{id:16,lvl:1}]}");
-		tier1Default.appendTag(item);
-		
-		item = new NBTTagCompound();
-		item.setInteger("weight", 1);
-		item.setString("itemId", "weaponcaseloot:weaponcase1");
-		item.setInteger("min", 0);
-		item.setInteger("max", 2);
-		item.setInteger("meta", 0);
-		item.setString("NBTData", "");
-		tier1Default.appendTag(item);
-		
-		return tier1Default;
+		return list;
 	}
-	*/
 }

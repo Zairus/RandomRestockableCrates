@@ -43,9 +43,9 @@ public class RandomRestockableCrates
 	{
 		RRCEventHandler eventHandler = new RRCEventHandler();
 		
-		RRCBlocks.initModels();
-		
 		RandomRestockableCrates.proxy.init(event);
+		
+		RRCBlocks.initModels();
 		
 		MinecraftForge.EVENT_BUS.register(eventHandler);
 		MinecraftForge.TERRAIN_GEN_BUS.register(eventHandler);

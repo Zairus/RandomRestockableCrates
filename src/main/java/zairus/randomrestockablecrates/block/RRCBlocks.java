@@ -22,6 +22,9 @@ public class RRCBlocks
 	
 	public static void initModels()
 	{
-		RandomRestockableCrates.proxy.registerBlockModel(crate, 0, ((BlockCrate)crate).getModName());
+		RandomRestockableCrates.proxy.registerBlockModel(crate, 0, ((BlockCrate)crate).getModName() + "1");
+		RandomRestockableCrates.proxy.registerBlockModel(crate, 1, ((BlockCrate)crate).getModName() + "2");
+		RandomRestockableCrates.proxy.registerBlockModel(crate, 2, ((BlockCrate)crate).getModName() + "3");
+		RandomRestockableCrates.proxy.registerBlockModel(crate, 3, ((BlockCrate)crate).getModName() + "4");
 	}
 }

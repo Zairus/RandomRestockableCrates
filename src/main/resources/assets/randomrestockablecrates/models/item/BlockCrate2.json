@@ -1,5 +1,5 @@
 {
-    "parent": "randomrestockablecrates:block/BlockCrate1",
+    "parent": "randomrestockablecrates:block/BlockCrate2",
     "display": {
         "thirdperson": {
             "rotation": [

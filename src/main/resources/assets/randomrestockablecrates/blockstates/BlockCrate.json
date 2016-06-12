@@ -1,20 +1,132 @@
 {
 	"forge_marker": 1,
 	"variants": {
-		"facing=east": {
-			"model": "randomrestockablecrates:BlockCrate",
+		"facing=east,open=false,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1",
 			"y": 270
 		},
-		"facing=south": {
-			"model": "randomrestockablecrates:BlockCrate",
+		"facing=south,open=false,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1",
 			"y": 0
 		},
-		"facing=west": {
-			"model": "randomrestockablecrates:BlockCrate",
+		"facing=west,open=false,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1",
 			"y": 90
 		},
-		"facing=north": {
-			"model": "randomrestockablecrates:BlockCrate",
+		"facing=north,open=false,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1",
+			"y": 180
+		},
+		"facing=east,open=true,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1Open",
+			"y": 270
+		},
+		"facing=south,open=true,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1Open",
+			"y": 0
+		},
+		"facing=west,open=true,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1Open",
+			"y": 90
+		},
+		"facing=north,open=true,tier=tier1": {
+			"model": "randomrestockablecrates:BlockCrate1Open",
+			"y": 180
+		},
+		"facing=east,open=false,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2",
+			"y": 270
+		},
+		"facing=south,open=false,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2",
+			"y": 0
+		},
+		"facing=west,open=false,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2",
+			"y": 90
+		},
+		"facing=north,open=false,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2",
+			"y": 180
+		},
+		"facing=east,open=true,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2Open",
+			"y": 270
+		},
+		"facing=south,open=true,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2Open",
+			"y": 0
+		},
+		"facing=west,open=true,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2Open",
+			"y": 90
+		},
+		"facing=north,open=true,tier=tier2": {
+			"model": "randomrestockablecrates:BlockCrate2Open",
+			"y": 180
+		},
+		"facing=east,open=false,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3",
+			"y": 270
+		},
+		"facing=south,open=false,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3",
+			"y": 0
+		},
+		"facing=west,open=false,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3",
+			"y": 90
+		},
+		"facing=north,open=false,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3",
+			"y": 180
+		},
+		"facing=east,open=true,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3Open",
+			"y": 270
+		},
+		"facing=south,open=true,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3Open",
+			"y": 0
+		},
+		"facing=west,open=true,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3Open",
+			"y": 90
+		},
+		"facing=north,open=true,tier=tier3": {
+			"model": "randomrestockablecrates:BlockCrate3Open",
+			"y": 180
+		},
+		"facing=east,open=false,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4",
+			"y": 270
+		},
+		"facing=south,open=false,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4",
+			"y": 0
+		},
+		"facing=west,open=false,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4",
+			"y": 90
+		},
+		"facing=north,open=false,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4",
+			"y": 180
+		},
+		"facing=east,open=true,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4Open",
+			"y": 270
+		},
+		"facing=south,open=true,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4Open",
+			"y": 0
+		},
+		"facing=west,open=true,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4Open",
+			"y": 90
+		},
+		"facing=north,open=true,tier=tier4": {
+			"model": "randomrestockablecrates:BlockCrate4Open",
 			"y": 180
 		}
     }

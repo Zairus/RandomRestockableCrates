@@ -30,7 +30,17 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	
 	private ItemStack[] chestContents = new ItemStack[9];
 	private String customName;
+	private int worldTicks;
 	private int lastOpened;
+	private boolean open = false;
+	
+	private int tier;
+	private static final NBTTagList[] tierPools = new NBTTagList[] {RRCConfig.crateTier1, RRCConfig.crateTier2, RRCConfig.crateTier3, RRCConfig.crateTier4};
+	
+	public TileEntityCrate(int crateTier)
+	{
+		this.tier = crateTier;
+	}
 	
 	public String getDefaultName()
 	{
@@ -165,7 +175,54 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			this.worldObj.notifyNeighborsOfStateChange(this.pos.down(), this.getBlockType());
 		}
 		
-		this.lastOpened = RRCEventHandler.restockTicks;
+		if (!this.open)
+			this.lastOpened = RRCEventHandler.restockTicks;
+		
+		this.open = true;
+		
+		updateMe();
+	}
+	
+	@Override
+	public void update()
+	{
+		this.worldTicks = RRCEventHandler.restockTicks;
+		
+		int ticksEllapsed = this.worldTicks - this.lastOpened;
+		
+		int restockTime = 0;
+		
+		switch(this.tier)
+		{
+		case 1:
+			restockTime = RRCConfig.tier2RestockTime;
+			break;
+		case 2:
+			restockTime = RRCConfig.tier3RestockTime;
+			break;
+		case 3:
+			restockTime = RRCConfig.tier4RestockTime;
+			break;
+		default:
+			restockTime = RRCConfig.tier1RestockTime;
+			break;
+		}
+		
+		if (ticksEllapsed >= restockTime || this.lastOpened == 0)
+		{
+			this.lastOpened = worldTicks;
+			
+			this.worldObj.playSound(
+					this.getPos().getX(), 
+					this.getPos().getY(), 
+					this.getPos().getZ(), 
+					"randomrestockablecrates:crate_open", 
+					1.0f, 1.2f / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f), 
+					true);
+			
+			restock(this.worldObj.rand);
+		}
+		
 		updateMe();
 	}
 	
@@ -173,13 +230,17 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		boolean addedItem = false;
 		
+		this.open = false;
+		
 		for (int i = 0; i < this.chestContents.length; ++i)
 		{
 			this.chestContents[i] = null;
 			if (rand.nextInt(6) == 0)
 			{
-				addedItem = true;
-				this.chestContents[i] = getStackFromPool(RRCConfig.crateTier1, rand);
+				this.chestContents[i] = getStackFromPool(tierPools[tier], rand);
+				
+				if (this.chestContents[i] != null)
+					addedItem = true;
 			}
 		}
 		
@@ -187,6 +248,11 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		{
 			this.chestContents[rand.nextInt(this.chestContents.length)] = getStackFromPool(RRCConfig.crateTier1, rand);
 		}
+	}
+	
+	public boolean getIsOpen()
+	{
+		return this.open;
 	}
 	
 	private ItemStack getStackFromPool(NBTTagList list, Random rand)
@@ -246,6 +312,8 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			this.customName = compound.getString("CustomName");
 		}
 		
+		this.tier = compound.getInteger("Tier");
+		
 		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
 			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
@@ -281,6 +349,8 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		{
 			compound.setString("CustomName", this.customName);
 		}
+		
+		compound.setInteger("Tier", this.tier);
 	}
 	
 	@Override
@@ -323,28 +393,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	}
 	
 	@Override
-	public void update()
-	{
-		int ticksEllapsed = RRCEventHandler.restockTicks - this.lastOpened;
-		
-		if (ticksEllapsed >= RRCConfig.tier1RestockTime || this.lastOpened == 0)
-		{
-			this.lastOpened = RRCEventHandler.restockTicks;
-			updateMe();
-			
-			this.worldObj.playSound(
-					this.getPos().getX(), 
-					this.getPos().getY(), 
-					this.getPos().getZ(), 
-					"randomrestockablecrates:crate_open", 
-					1.0f, 1.2f / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f), 
-					true);
-			
-			restock(this.worldObj.rand);
-		}
-	}
-	
-	@Override
 	public boolean receiveClientEvent(int id, int type)
 	{
 		if (id == 1)
@@ -381,11 +429,13 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	
 	protected void writeSyncableDataToNBT(NBTTagCompound syncData)
 	{
+		syncData.setInteger("worldTicks", this.worldTicks);
 		syncData.setInteger("lastOpened", this.lastOpened);
 	}
 	
 	protected void readSyncableDataFromNBT(NBTTagCompound syncData)
 	{
+		this.worldTicks = syncData.getInteger("worldTicks");
 		this.lastOpened = syncData.getInteger("lastOpened");
 	}
 	

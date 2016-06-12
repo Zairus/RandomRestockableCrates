@@ -2,8 +2,10 @@ package zairus.randomrestockablecrates.proxy;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -48,6 +50,8 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void registerItemModel(Item item, int meta, String texture)
 	{
+		ModelBakery.registerItemVariants(item, new ResourceLocation(RRCConstants.MODID, texture));
+		
 		String itemId = RRCConstants.MODID + ":" + texture;
 		mc.getRenderItem().getItemModelMesher().register(item, meta, new ModelResourceLocation(itemId, "inventory"));
 	}
