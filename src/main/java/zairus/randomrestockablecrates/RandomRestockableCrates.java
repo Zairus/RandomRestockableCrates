@@ -2,6 +2,8 @@ package zairus.randomrestockablecrates;
 
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -13,6 +15,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import zairus.randomrestockablecrates.block.RRCBlocks;
 import zairus.randomrestockablecrates.event.RRCEventHandler;
 import zairus.randomrestockablecrates.gui.GuiHandler;
+import zairus.randomrestockablecrates.network.PacketPipeline;
 import zairus.randomrestockablecrates.proxy.CommonProxy;
 
 @Mod(modid = RRCConstants.MODID, name = RRCConstants.NAME, version = RRCConstants.VERSION)
@@ -25,6 +28,16 @@ public class RandomRestockableCrates
 	
 	@Mod.Instance(RRCConstants.MODID)
 	public static RandomRestockableCrates instance;
+	
+	public static final PacketPipeline packetPipeline = new PacketPipeline();
+	
+	public static CreativeTabs tabCrates = new CreativeTabs("Random Crates") {
+		@Override
+		public Item getTabIconItem()
+		{
+			return Item.getItemFromBlock(RRCBlocks.crate);
+		}
+	};
 	
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -44,6 +57,7 @@ public class RandomRestockableCrates
 		RRCEventHandler eventHandler = new RRCEventHandler();
 		
 		RandomRestockableCrates.proxy.init(event);
+		packetPipeline.initalise();
 		
 		RRCBlocks.initModels();
 		
@@ -57,5 +71,6 @@ public class RandomRestockableCrates
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		RandomRestockableCrates.proxy.postInit(event);
+		packetPipeline.postInitialise();
 	}
 }

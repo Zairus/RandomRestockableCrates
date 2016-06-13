@@ -1,20 +1,15 @@
 package zairus.randomrestockablecrates.block;
 
-import java.util.List;
-
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -24,8 +19,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import zairus.randomrestockablecrates.RandomRestockableCrates;
 import zairus.randomrestockablecrates.tileentity.TileEntityCrate;
 
@@ -33,22 +26,29 @@ public class BlockCrate extends BlockContainer
 {
 	private String modName;
 	
+	private final int crateTier;
+	
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	public static final PropertyBool OPEN = PropertyBool.create("open");
-	public static final PropertyEnum<EnumTier> TIER = PropertyEnum.<EnumTier>create("tier", EnumTier.class);
 	
-	public BlockCrate()
+	public BlockCrate(Material material, int tier)
 	{
-		super(Material.wood);
-		this.setCreativeTab(CreativeTabs.tabDecorations);
-		this.setStepSound(soundTypeWood);
+		super(material);
+		this.crateTier = tier;
+		this.setCreativeTab(RandomRestockableCrates.tabCrates);
 		this.setResistance(6000000.0F);
 		this.setHardness(1.9F);
 		this.setHarvestLevel("axe", 0);
 		this.setBlockBounds(0.08F, 0.0F, 0.08F, 0.93F, 0.93F, 0.93F);
-		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(OPEN, false).withProperty(TIER, EnumTier.TIER1));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(OPEN, false));
 		
 		this.setBlockUnbreakable();
+	}
+	
+	public BlockCrate setSound(SoundType sound)
+	{
+		this.setStepSound(sound);
+		return this;
 	}
 	
 	@Override
@@ -56,21 +56,6 @@ public class BlockCrate extends BlockContainer
 	{
 		return false;
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list)
-    {
-		for (EnumTier tiers : EnumTier.values())
-		{
-			ItemStack stack = new ItemStack(item, 1, tiers.getMetadata());
-			String displayName = "Tier " + (tiers.getMetadata() + 1) + " Crate";
-			
-			stack.setStackDisplayName(displayName);
-			
-			list.add(stack);
-		}
-    }
 	
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
@@ -97,7 +82,7 @@ public class BlockCrate extends BlockContainer
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
-		return new TileEntityCrate(meta);
+		return new TileEntityCrate(crateTier);
 	}
 	
 	@Override
@@ -131,19 +116,19 @@ public class BlockCrate extends BlockContainer
 	@Override
 	protected BlockState createBlockState()
 	{
-		return new BlockState(this, new IProperty[] {FACING, OPEN, TIER});
+		return new BlockState(this, new IProperty[] {FACING, OPEN});
 	}
 	
 	@Override
 	public int damageDropped(IBlockState state)
 	{
-		return ((EnumTier)state.getValue(TIER)).getMetadata();
+		return ((EnumFacing)state.getValue(FACING)).getIndex();
 	}
 	
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return ((EnumTier)state.getValue(TIER)).getMetadata();
+		return ((EnumFacing)state.getValue(FACING)).getIndex();
 	}
 	
 	@Override
@@ -156,7 +141,7 @@ public class BlockCrate extends BlockContainer
 			enumfacing = EnumFacing.NORTH;
 		}
 		
-		IBlockState state = getDefaultState().withProperty(FACING, enumfacing).withProperty(OPEN, false).withProperty(TIER, EnumTier.TIER1);
+		IBlockState state = getDefaultState().withProperty(FACING, enumfacing).withProperty(OPEN, false);
 		
 		return state;
 	}
@@ -175,7 +160,7 @@ public class BlockCrate extends BlockContainer
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
 		EnumFacing enumfacing = EnumFacing.getHorizontal(MathHelper.floor_double((double)(placer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3).getOpposite();
-        state = state.withProperty(FACING, enumfacing).withProperty(OPEN, false).withProperty(TIER, EnumTier.fromMeta(stack.getItemDamage()));
+        state = state.withProperty(FACING, enumfacing).withProperty(OPEN, false);
         world.setBlockState(pos, state, 3);
 	}
 	
@@ -184,8 +169,7 @@ public class BlockCrate extends BlockContainer
 	{
 		return super.onBlockPlaced(world, pos, facing, hitX, hitY, hitZ, meta, placer)
 				.withProperty(FACING, placer.getHorizontalFacing())
-				.withProperty(OPEN, false)
-				.withProperty(TIER, EnumTier.fromMeta(meta));
+				.withProperty(OPEN, false);
 	}
 	
 	@Override

@@ -1,1 +1,4 @@
-tile.BlockCrate.name=Random Crate
+tile.BlockCrate1.name=Random Crate Tier 1
+tile.BlockCrate2.name=Random Crate Tier 2
+tile.BlockCrate3.name=Random Crate Tier 3
+tile.BlockCrate4.name=Random Crate Tier 4

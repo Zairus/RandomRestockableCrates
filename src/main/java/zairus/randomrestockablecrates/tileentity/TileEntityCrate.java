@@ -20,8 +20,6 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.ITickable;
 import zairus.randomrestockablecrates.RRCConfig;
-import zairus.randomrestockablecrates.RandomRestockableCrates;
-import zairus.randomrestockablecrates.event.RRCEventHandler;
 import zairus.randomrestockablecrates.inventory.ContainerCrate;
 
 public class TileEntityCrate extends TileEntityLockable implements ITickable, IInventory
@@ -33,8 +31,9 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	private int worldTicks;
 	private int lastOpened;
 	private boolean open = false;
+	private boolean firstTime = true;
 	
-	private int tier;
+	private final int tier;
 	private static final NBTTagList[] tierPools = new NBTTagList[] {RRCConfig.crateTier1, RRCConfig.crateTier2, RRCConfig.crateTier3, RRCConfig.crateTier4};
 	
 	public TileEntityCrate(int crateTier)
@@ -176,7 +175,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		}
 		
 		if (!this.open)
-			this.lastOpened = RRCEventHandler.restockTicks;
+			this.lastOpened = this.worldTicks;
 		
 		this.open = true;
 		
@@ -186,7 +185,15 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	@Override
 	public void update()
 	{
-		this.worldTicks = RRCEventHandler.restockTicks;
+		++this.worldTicks;
+		/*
+		if (this.worldObj.isRemote)
+		{
+			this.worldTicks = RRCEventHandler.restockTicks;
+			updateMe();
+			RandomRestockableCrates.packetPipeline.sendToServer(new RRCCrateSyncPacket(this.getPos().getX(), this.pos.getY(), this.pos.getZ(), this.worldTicks, this.lastOpened));
+		}
+		*/
 		
 		int ticksEllapsed = this.worldTicks - this.lastOpened;
 		
@@ -208,9 +215,11 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			break;
 		}
 		
-		if (ticksEllapsed >= restockTime || this.lastOpened == 0)
+		if (ticksEllapsed >= restockTime || this.firstTime)
 		{
+			this.firstTime = false;
 			this.lastOpened = worldTicks;
+			updateMe();
 			
 			this.worldObj.playSound(
 					this.getPos().getX(), 
@@ -222,8 +231,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			
 			restock(this.worldObj.rand);
 		}
-		
-		updateMe();
 	}
 	
 	private void restock(Random rand)
@@ -231,6 +238,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		boolean addedItem = false;
 		
 		this.open = false;
+		updateMe();
 		
 		for (int i = 0; i < this.chestContents.length; ++i)
 		{
@@ -246,8 +254,14 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		
 		if (!addedItem)
 		{
-			this.chestContents[rand.nextInt(this.chestContents.length)] = getStackFromPool(RRCConfig.crateTier1, rand);
+			this.chestContents[rand.nextInt(this.chestContents.length)] = getStackFromPool(tierPools[tier], rand);
 		}
+	}
+	
+	public void syncValues(int ticks, int lastOpened)
+	{
+		this.worldTicks = ticks;
+		this.lastOpened = lastOpened;
 	}
 	
 	public boolean getIsOpen()
@@ -277,7 +291,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 				try {
 					tag = JsonToNBT.getTagFromJson(curElement.getString("NBTData"));
 				} catch (NBTException e) {
-					RandomRestockableCrates.logger.info("Erorr in stack [" + curElement.getString("NBTData") + "]:" + e.toString());
 				}
 				
 				if (tag != null)
@@ -311,8 +324,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		{
 			this.customName = compound.getString("CustomName");
 		}
-		
-		this.tier = compound.getInteger("Tier");
 		
 		for (int i = 0; i < nbttaglist.tagCount(); ++i)
 		{
