@@ -186,14 +186,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	public void update()
 	{
 		++this.worldTicks;
-		/*
-		if (this.worldObj.isRemote)
-		{
-			this.worldTicks = RRCEventHandler.restockTicks;
-			updateMe();
-			RandomRestockableCrates.packetPipeline.sendToServer(new RRCCrateSyncPacket(this.getPos().getX(), this.pos.getY(), this.pos.getZ(), this.worldTicks, this.lastOpened));
-		}
-		*/
 		
 		int ticksEllapsed = this.worldTicks - this.lastOpened;
 		
@@ -256,6 +248,8 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		{
 			this.chestContents[rand.nextInt(this.chestContents.length)] = getStackFromPool(tierPools[tier], rand);
 		}
+		
+		this.markDirty();
 	}
 	
 	public void syncValues(int ticks, int lastOpened)
@@ -335,6 +329,10 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 				this.chestContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
 			}
 		}
+		
+		this.firstTime = compound.getBoolean("first");
+		this.worldTicks = compound.getInteger("ticks");
+		this.lastOpened = compound.getInteger("lastOpened");
 	}
 	
 	@Override
@@ -361,7 +359,10 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			compound.setString("CustomName", this.customName);
 		}
 		
+		compound.setBoolean("first", this.firstTime);
 		compound.setInteger("Tier", this.tier);
+		compound.setInteger("ticks", this.worldTicks);
+		compound.setInteger("lastOpened", this.lastOpened);
 	}
 	
 	@Override

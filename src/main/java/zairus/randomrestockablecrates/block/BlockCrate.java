@@ -51,6 +51,11 @@ public class BlockCrate extends BlockContainer
 		return this;
 	}
 	
+	public int getTier()
+	{
+		return this.crateTier;
+	}
+	
 	@Override
 	public boolean isOpaqueCube()
 	{

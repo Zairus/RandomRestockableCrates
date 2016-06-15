@@ -31,7 +31,7 @@ public class RandomRestockableCrates
 	
 	public static final PacketPipeline packetPipeline = new PacketPipeline();
 	
-	public static CreativeTabs tabCrates = new CreativeTabs("Random Crates") {
+	public static CreativeTabs tabCrates = new CreativeTabs("RandomCrates") {
 		@Override
 		public Item getTabIconItem()
 		{
