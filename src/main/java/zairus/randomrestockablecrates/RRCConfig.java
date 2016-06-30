@@ -50,27 +50,6 @@ public class RRCConfig
 		crateTier4 = getDefaultTagList(tier4Elements, "TIER4_POOL", "minecraft:diamond_sword");
 		
 		config.save();
-		
-		/*
-		for (int i = 0; i < tier1Elements; ++i)
-		{
-			int weight = config.getInt("weight_item" + i, "TIER1_POOL", 1, 1, 20, "Weight for generation on crate.");
-			String itemId = config.getString("itemId_item" + i, "TIER1_POOL", "minecraft:stone_sword", "Named item id.");
-			int min = config.getInt("min_item" + i, "TIER1_POOL", 0, 0, 64, "Minimum count for the item stack.");
-			int max = config.getInt("max_item" + i, "TIER1_POOL", 1, 1, 64, "Maximum count for the item stack.");
-			int meta = config.getInt("meta_item" + i, "TIER1_POOL", 0, 0, 64, "Metadata for the item.");
-			String nbt = config.getString("nbt_item" + i, "TIER1_POOL", "", "Additional NBT Data for the item.");
-			
-			NBTTagCompound item = new NBTTagCompound();
-			item.setInteger("weight", weight);
-			item.setString("itemId", itemId);
-			item.setInteger("min", min);
-			item.setInteger("max", max);
-			item.setInteger("meta", meta);
-			item.setString("NBTData", nbt);
-			crateTier1.appendTag(item);
-		}
-		*/
 	}
 	
 	private static NBTTagList getDefaultTagList(int elements, String category, String default_item)
@@ -84,9 +63,9 @@ public class RRCConfig
 		{
 			int weight = config.getInt("weight_item" + i, category, 1, 1, 20, "Weight for generation on crate.");
 			String itemId = config.getString("itemId_item" + i, category, default_item, "Named item id.");
-			int min = config.getInt("min_item" + i, category, 0, 0, 64, "Minimum count for the item stack.");
-			int max = config.getInt("max_item" + i, category, 1, 1, 64, "Maximum count for the item stack.");
-			int meta = config.getInt("meta_item" + i, category, 0, 0, 64, "Metadata for the item.");
+			int min = config.getInt("min_item" + i, category, 0, 0, 25565, "Minimum count for the item stack.");
+			int max = config.getInt("max_item" + i, category, 1, 1, 25565, "Maximum count for the item stack.");
+			int meta = config.getInt("meta_item" + i, category, 0, 0, 25565, "Metadata for the item.");
 			String nbt = config.getString("nbt_item" + i, category, "", "Additional NBT Data for the item.");
 			
 			NBTTagCompound item = new NBTTagCompound();
