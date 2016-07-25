@@ -56,4 +56,8 @@ public class CommonProxy
 	public void registerBlockModel(Block block, int metadata, String modName)
 	{
 	}
+	
+	public void initTESR()
+	{
+	}
 }

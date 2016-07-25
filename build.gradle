@@ -14,7 +14,7 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.1.5"
+version = "1.1.6"
 group= "zairus.randomrestockablecrates"
 archivesBaseName = "randomrestockablecrates"
 

@@ -1,6 +1,7 @@
 package zairus.randomrestockablecrates.block;
 
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -22,7 +23,7 @@ import net.minecraft.world.World;
 import zairus.randomrestockablecrates.RandomRestockableCrates;
 import zairus.randomrestockablecrates.tileentity.TileEntityCrate;
 
-public class BlockCrate extends BlockContainer
+public class BlockCrate extends BlockContainer implements ITileEntityProvider
 {
 	private String modName;
 	
@@ -77,6 +78,7 @@ public class BlockCrate extends BlockContainer
 			{
 				world.playSoundAtEntity(player, "randomrestockablecrates:crate_open", 1.0f, 1.2f / (world.rand.nextFloat() * 0.2f + 0.9f));
 				player.openGui(RandomRestockableCrates.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
+				
 				return true;
 			}
 		}
@@ -133,20 +135,35 @@ public class BlockCrate extends BlockContainer
 	@Override
 	public int getMetaFromState(IBlockState state)
 	{
-		return ((EnumFacing)state.getValue(FACING)).getIndex();
+		boolean o = state.getValue(OPEN);
+		int f = state.getValue(FACING).getIndex();
+		
+		if (o)
+			f += 5;
+		
+		return f;
 	}
 	
 	@Override
 	public IBlockState getStateFromMeta(int meta)
 	{
-		EnumFacing enumfacing = EnumFacing.getFront(meta);
+		int m = meta;
+		boolean o = false;
+		
+		if (m > 5)
+		{
+			m -= 5;
+			o = true;
+		}
+		
+		EnumFacing enumfacing = EnumFacing.getFront(m);
 		
 		if (enumfacing.getAxis() == EnumFacing.Axis.Y)
 		{
 			enumfacing = EnumFacing.NORTH;
 		}
 		
-		IBlockState state = getDefaultState().withProperty(FACING, enumfacing).withProperty(OPEN, false);
+		IBlockState state = getDefaultState().withProperty(FACING, enumfacing).withProperty(OPEN, o);
 		
 		return state;
 	}
@@ -186,7 +203,7 @@ public class BlockCrate extends BlockContainer
 	@Override
 	public int getRenderType()
 	{
-		return 3;
+		return 2;
 	}
 	
 	//Block

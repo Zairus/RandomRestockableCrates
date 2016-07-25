@@ -6,11 +6,14 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import zairus.randomrestockablecrates.RRCConstants;
 import zairus.randomrestockablecrates.block.RRCBlock;
+import zairus.randomrestockablecrates.client.renderer.tileentity.TileEntityCrateRenderer;
+import zairus.randomrestockablecrates.tileentity.TileEntityCrate;
 
 public class ClientProxy extends CommonProxy
 {
@@ -70,5 +73,11 @@ public class ClientProxy extends CommonProxy
 		{
 			registerItemModel(item, meta, modName);
 		}
+	}
+	
+	@Override
+	public void initTESR()
+	{
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCrate.class, new TileEntityCrateRenderer());
 	}
 }

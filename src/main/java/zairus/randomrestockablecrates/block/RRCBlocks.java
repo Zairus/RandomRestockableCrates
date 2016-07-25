@@ -29,6 +29,7 @@ public class RRCBlocks
 		RandomRestockableCrates.proxy.registerBlock(crate4, ((BlockCrate)crate4).getModName());
 		
 		GameRegistry.registerTileEntity(TileEntityCrate.class, "tileEntityCrate");
+		RandomRestockableCrates.proxy.initTESR();
 	}
 	
 	public static void initModels()

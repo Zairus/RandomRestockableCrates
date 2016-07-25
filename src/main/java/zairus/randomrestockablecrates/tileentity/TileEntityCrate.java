@@ -3,6 +3,7 @@ package zairus.randomrestockablecrates.tileentity;
 import java.util.Random;
 
 import net.minecraft.block.BlockChest;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -18,7 +19,9 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockable;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
+import net.minecraft.world.World;
 import zairus.randomrestockablecrates.RRCConfig;
 import zairus.randomrestockablecrates.inventory.ContainerCrate;
 
@@ -182,6 +185,17 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		updateMe();
 	}
 	
+	public int getTier()
+	{
+		return this.tier;
+	}
+	
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
+	{
+		return super.shouldRefresh(world, pos, oldState, newState);
+	}
+	
 	@Override
 	public void update()
 	{
@@ -223,6 +237,8 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			
 			restock(this.worldObj.rand);
 		}
+		
+		updateMe();
 	}
 	
 	private void restock(Random rand)
@@ -252,10 +268,11 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		this.markDirty();
 	}
 	
-	public void syncValues(int ticks, int lastOpened)
+	public void syncValues(int ticks, int lastOpened, boolean open)
 	{
 		this.worldTicks = ticks;
 		this.lastOpened = lastOpened;
+		this.open = open;
 	}
 	
 	public boolean getIsOpen()
@@ -333,6 +350,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		this.firstTime = compound.getBoolean("first");
 		this.worldTicks = compound.getInteger("ticks");
 		this.lastOpened = compound.getInteger("lastOpened");
+		this.open = compound.getBoolean("open");
 	}
 	
 	@Override
@@ -363,6 +381,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		compound.setInteger("Tier", this.tier);
 		compound.setInteger("ticks", this.worldTicks);
 		compound.setInteger("lastOpened", this.lastOpened);
+		compound.setBoolean("open", this.open);
 	}
 	
 	@Override
@@ -443,12 +462,14 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		syncData.setInteger("worldTicks", this.worldTicks);
 		syncData.setInteger("lastOpened", this.lastOpened);
+		syncData.setBoolean("open", this.open);
 	}
 	
 	protected void readSyncableDataFromNBT(NBTTagCompound syncData)
 	{
 		this.worldTicks = syncData.getInteger("worldTicks");
 		this.lastOpened = syncData.getInteger("lastOpened");
+		this.open = syncData.getBoolean("open");
 	}
 	
 	private void updateMe()
