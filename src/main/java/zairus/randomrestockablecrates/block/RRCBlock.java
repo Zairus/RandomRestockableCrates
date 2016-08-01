@@ -2,7 +2,6 @@ package zairus.randomrestockablecrates.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 
 public class RRCBlock extends Block
 {
@@ -11,7 +10,6 @@ public class RRCBlock extends Block
 	protected RRCBlock(Material material)
 	{
 		super(material);
-		this.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 	
 	public RRCBlock setUnlocalizedName(String unlocalizedName)

@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 import zairus.randomrestockablecrates.RRCConstants;
+import zairus.randomrestockablecrates.RandomRestockableCrates;
 import zairus.randomrestockablecrates.block.BlockCrate;
 import zairus.randomrestockablecrates.client.ModelCrate;
 import zairus.randomrestockablecrates.tileentity.TileEntityCrate;
@@ -58,15 +59,17 @@ public class TileEntityCrateRenderer extends TileEntitySpecialRenderer<TileEntit
 			GlStateManager.matrixMode(5888);
 		}
 		
+		//RandomRestockableCrates.logger.info("t:" + ((TileEntityCrate)te.getWorld().getTileEntity(te.getPos())).getTier());
+		
 		switch(te.getTier())
 		{
-		case 2:
+		case 1:
 			this.bindTexture(cratetier2);
 			break;
-		case 3:
+		case 2:
 			this.bindTexture(cratetier3);
 			break;
-		case 4:
+		case 3:
 			this.bindTexture(cratetier4);
 			break;
 		default:

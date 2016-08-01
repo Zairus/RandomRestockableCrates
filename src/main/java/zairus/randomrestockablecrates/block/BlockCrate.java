@@ -1,26 +1,35 @@
 package zairus.randomrestockablecrates.block;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import zairus.randomrestockablecrates.RandomRestockableCrates;
+import zairus.randomrestockablecrates.sound.RRCSoundEvents;
 import zairus.randomrestockablecrates.tileentity.TileEntityCrate;
 
 public class BlockCrate extends BlockContainer implements ITileEntityProvider
@@ -40,15 +49,20 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 		this.setResistance(6000000.0F);
 		this.setHardness(1.9F);
 		this.setHarvestLevel("axe", 0);
-		this.setBlockBounds(0.08F, 0.0F, 0.08F, 0.93F, 0.93F, 0.93F);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(OPEN, false));
 		
 		this.setBlockUnbreakable();
 	}
 	
-	public BlockCrate setSound(SoundType sound)
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
 	{
-		this.setStepSound(sound);
+		return new AxisAlignedBB(0.08F, 0.0F, 0.08F, 0.93F, 0.93F, 0.93F);
+	}
+	
+	protected Block setSoundType(SoundType sound)
+	{
+		super.setSoundType(sound);
 		return this;
 	}
 	
@@ -58,14 +72,16 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 	}
 	
 	@Override
-	public boolean isOpaqueCube()
+	public boolean isOpaqueCube(IBlockState state)
 	{
 		return false;
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
+		world.playSound(player, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (world.rand.nextFloat() * 0.2f + 0.9f));
+		
 		if (world.isRemote)
 		{
 			return true;
@@ -76,7 +92,6 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 			
 			if (ilockablecontainer != null)
 			{
-				world.playSoundAtEntity(player, "randomrestockablecrates:crate_open", 1.0f, 1.2f / (world.rand.nextFloat() * 0.2f + 0.9f));
 				player.openGui(RandomRestockableCrates.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
 				
 				return true;
@@ -93,19 +108,19 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 	}
 	
 	@Override
-	public boolean canProvidePower()
+	public boolean canProvidePower(IBlockState state)
 	{
 		return true;
 	}
 	
 	@Override
-	public boolean hasComparatorInputOverride()
+	public boolean hasComparatorInputOverride(IBlockState state)
 	{
 		return true;
 	}
 	
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos pos)
+	public int getComparatorInputOverride(IBlockState blockState, World world, BlockPos pos)
 	{
 		return Container.calcRedstoneFromInventory(this.getLockableContainer(world, pos));
 	}
@@ -119,11 +134,10 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 		return ilockablecontainer;
 	}
 	
-	//Facing
 	@Override
-	protected BlockState createBlockState()
+	protected BlockStateContainer createBlockState()
 	{
-		return new BlockState(this, new IProperty[] {FACING, OPEN});
+		return new BlockStateContainer(this, new IProperty[] {FACING, OPEN});
 	}
 	
 	@Override
@@ -201,9 +215,9 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 	}
 	
 	@Override
-	public int getRenderType()
+	public EnumBlockRenderType getRenderType(IBlockState state)
 	{
-		return 2;
+		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 	
 	//Block

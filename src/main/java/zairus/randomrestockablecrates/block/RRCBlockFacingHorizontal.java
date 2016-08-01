@@ -3,13 +3,13 @@ package zairus.randomrestockablecrates.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -23,9 +23,9 @@ public class RRCBlockFacingHorizontal extends RRCBlock
 	}
 	
 	@Override
-	protected BlockState createBlockState()
+	protected BlockStateContainer createBlockState()
 	{
-		return new BlockState(this, new IProperty[] {FACING});
+		return new BlockStateContainer(this, new IProperty[] {FACING});
 	}
 	
 	@Override
@@ -65,11 +65,5 @@ public class RRCBlockFacingHorizontal extends RRCBlock
 	public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
 		return super.onBlockPlaced(world, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(FACING, placer.getHorizontalFacing());
-	}
-	
-	@Override
-	public int getRenderType()
-	{
-		return 3;
 	}
 }

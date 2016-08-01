@@ -14,16 +14,15 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockable;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import zairus.randomrestockablecrates.RRCConfig;
 import zairus.randomrestockablecrates.inventory.ContainerCrate;
+import zairus.randomrestockablecrates.sound.RRCSoundEvents;
 
 public class TileEntityCrate extends TileEntityLockable implements ITickable, IInventory
 {
@@ -36,8 +35,13 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	private boolean open = false;
 	private boolean firstTime = true;
 	
-	private final int tier;
+	private int tier = -1;
 	private static final NBTTagList[] tierPools = new NBTTagList[] {RRCConfig.crateTier1, RRCConfig.crateTier2, RRCConfig.crateTier3, RRCConfig.crateTier4};
+	
+	public TileEntityCrate()
+	{
+		this.tier = -1;
+	}
 	
 	public TileEntityCrate(int crateTier)
 	{
@@ -199,50 +203,50 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	@Override
 	public void update()
 	{
-		++this.worldTicks;
-		
-		int ticksEllapsed = this.worldTicks - this.lastOpened;
-		
-		int restockTime = 0;
-		
-		switch(this.tier)
+		if (this.tier > -1)
 		{
-		case 1:
-			restockTime = RRCConfig.tier2RestockTime;
-			break;
-		case 2:
-			restockTime = RRCConfig.tier3RestockTime;
-			break;
-		case 3:
-			restockTime = RRCConfig.tier4RestockTime;
-			break;
-		default:
-			restockTime = RRCConfig.tier1RestockTime;
-			break;
-		}
-		
-		if (ticksEllapsed >= restockTime || this.firstTime)
-		{
-			this.firstTime = false;
-			this.lastOpened = worldTicks;
+			++this.worldTicks;
+			
+			int ticksEllapsed = this.worldTicks - this.lastOpened;
+			
+			int restockTime = 0;
+			
+			switch(this.tier)
+			{
+			case 1:
+				restockTime = RRCConfig.tier2RestockTime;
+				break;
+			case 2:
+				restockTime = RRCConfig.tier3RestockTime;
+				break;
+			case 3:
+				restockTime = RRCConfig.tier4RestockTime;
+				break;
+			default:
+				restockTime = RRCConfig.tier1RestockTime;
+				break;
+			}
+			
+			if (ticksEllapsed >= restockTime || this.firstTime)
+			{
+				this.firstTime = false;
+				this.lastOpened = worldTicks;
+				updateMe();
+				
+				this.worldObj.playSound((EntityPlayer)null, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f));
+				
+				restock(this.worldObj.rand);
+			}
+			
 			updateMe();
-			
-			this.worldObj.playSound(
-					this.getPos().getX(), 
-					this.getPos().getY(), 
-					this.getPos().getZ(), 
-					"randomrestockablecrates:crate_open", 
-					1.0f, 1.2f / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f), 
-					true);
-			
-			restock(this.worldObj.rand);
 		}
-		
-		updateMe();
 	}
 	
 	private void restock(Random rand)
 	{
+		if (this.tier < 0)
+			return;
+		
 		boolean addedItem = false;
 		
 		this.open = false;
@@ -351,10 +355,11 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		this.worldTicks = compound.getInteger("ticks");
 		this.lastOpened = compound.getInteger("lastOpened");
 		this.open = compound.getBoolean("open");
+		this.tier = compound.getInteger("tier");
 	}
 	
 	@Override
-	public void writeToNBT(NBTTagCompound compound)
+	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
 		super.writeToNBT(compound);
 		NBTTagList nbttaglist = new NBTTagList();
@@ -378,10 +383,12 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		}
 		
 		compound.setBoolean("first", this.firstTime);
-		compound.setInteger("Tier", this.tier);
+		compound.setInteger("tier", this.tier);
 		compound.setInteger("ticks", this.worldTicks);
 		compound.setInteger("lastOpened", this.lastOpened);
 		compound.setBoolean("open", this.open);
+		
+		return compound;
 	}
 	
 	@Override
@@ -445,15 +452,15 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	}
 	
 	@Override
-	public Packet<INetHandlerPlayClient> getDescriptionPacket()
+	public SPacketUpdateTileEntity getUpdatePacket()
 	{
 		NBTTagCompound syncData = new NBTTagCompound();
 		writeSyncableDataToNBT(syncData);
-		return new S35PacketUpdateTileEntity(this.getPos(), 1, syncData);
+		return new SPacketUpdateTileEntity(this.getPos(), 1, syncData);
 	}
 	
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+	public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
 	{
 		readSyncableDataFromNBT(pkt.getNbtCompound());
 	}
@@ -463,6 +470,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		syncData.setInteger("worldTicks", this.worldTicks);
 		syncData.setInteger("lastOpened", this.lastOpened);
 		syncData.setBoolean("open", this.open);
+		syncData.setInteger("tier", this.tier);
 	}
 	
 	protected void readSyncableDataFromNBT(NBTTagCompound syncData)
@@ -470,10 +478,14 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		this.worldTicks = syncData.getInteger("worldTicks");
 		this.lastOpened = syncData.getInteger("lastOpened");
 		this.open = syncData.getBoolean("open");
+		this.tier = syncData.getInteger("tier");
 	}
 	
 	private void updateMe()
 	{
-		this.worldObj.markBlockForUpdate(this.getPos());
+		this.markDirty();
+		this.worldObj.markBlockRangeForRenderUpdate(getPos().add(-1, -1, -1), getPos().add(1, 1, 1));
+		IBlockState state = this.worldObj.getBlockState(getPos());
+		this.worldObj.notifyBlockUpdate(getPos(), state, state, 0);
 	}
 }

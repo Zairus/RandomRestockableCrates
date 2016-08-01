@@ -2,8 +2,8 @@
 	"crate_open": {
 		"category": "master"
 		,"sounds": [
-			{"name": "crate1", "stream": false}
-			,{"name": "crate2", "stream": false}
+			{"name": "randomrestockablecrates:crate1", "stream": false}
+			,{"name": "randomrestockablecrates:crate2", "stream": false}
 		]
 	}
 }
