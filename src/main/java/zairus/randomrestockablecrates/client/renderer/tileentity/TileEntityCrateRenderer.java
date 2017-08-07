@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.ResourceLocation;
 import zairus.randomrestockablecrates.RRCConstants;
-import zairus.randomrestockablecrates.RandomRestockableCrates;
 import zairus.randomrestockablecrates.block.BlockCrate;
 import zairus.randomrestockablecrates.client.ModelCrate;
 import zairus.randomrestockablecrates.tileentity.TileEntityCrate;

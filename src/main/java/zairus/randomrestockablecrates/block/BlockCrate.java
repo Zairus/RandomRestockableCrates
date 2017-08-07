@@ -21,7 +21,6 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -29,7 +28,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import zairus.randomrestockablecrates.RandomRestockableCrates;
-import zairus.randomrestockablecrates.sound.RRCSoundEvents;
 import zairus.randomrestockablecrates.tileentity.TileEntityCrate;
 
 public class BlockCrate extends BlockContainer implements ITileEntityProvider
@@ -80,8 +78,6 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
-		world.playSound(player, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (world.rand.nextFloat() * 0.2f + 0.9f));
-		
 		if (world.isRemote)
 		{
 			return true;

@@ -89,7 +89,7 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 
 		AbstractPacket pkt = clazz.newInstance();
 		pkt.decodeInto(ctx, payload.slice());
-
+		
 		EntityPlayer player;
 		switch (FMLCommonHandler.instance().getEffectiveSide())
 		{

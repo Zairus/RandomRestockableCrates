@@ -184,6 +184,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		if (!this.open)
 			this.lastOpened = this.worldTicks;
 		
+		this.worldObj.playSound((EntityPlayer)null, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f));
 		this.open = true;
 		
 		updateMe();
@@ -231,7 +232,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			{
 				this.firstTime = false;
 				this.lastOpened = worldTicks;
-				updateMe();
 				
 				this.worldObj.playSound((EntityPlayer)null, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f));
 				
@@ -250,7 +250,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		boolean addedItem = false;
 		
 		this.open = false;
-		updateMe();
 		
 		for (int i = 0; i < this.chestContents.length; ++i)
 		{
@@ -452,6 +451,23 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	}
 	
 	@Override
+	public NBTTagCompound getUpdateTag()
+	{
+		NBTTagCompound tag = super.getUpdateTag();
+		
+		writeSyncableDataToNBT(tag);
+		
+		return tag;
+	}
+	
+	@Override
+	public void handleUpdateTag(NBTTagCompound tag)
+	{
+		super.handleUpdateTag(tag);
+		this.readSyncableDataFromNBT(tag);
+	}
+	
+	@Override
 	public SPacketUpdateTileEntity getUpdatePacket()
 	{
 		NBTTagCompound syncData = new NBTTagCompound();
@@ -484,7 +500,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	private void updateMe()
 	{
 		this.markDirty();
-		this.worldObj.markBlockRangeForRenderUpdate(getPos().add(-1, -1, -1), getPos().add(1, 1, 1));
+		
 		IBlockState state = this.worldObj.getBlockState(getPos());
 		this.worldObj.notifyBlockUpdate(getPos(), state, state, 0);
 	}
