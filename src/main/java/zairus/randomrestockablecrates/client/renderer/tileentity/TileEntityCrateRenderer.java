@@ -32,7 +32,7 @@ public class TileEntityCrateRenderer extends TileEntitySpecialRenderer<TileEntit
 		GlStateManager.depthMask(true);
 		int i;
 		
-		if (!te.hasWorldObj())
+		if (!te.hasWorld())
 		{
 			i = 0;
 		}

@@ -3,7 +3,7 @@ package zairus.randomrestockablecrates;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -33,9 +33,9 @@ public class RandomRestockableCrates
 	
 	public static CreativeTabs tabCrates = new CreativeTabs("RandomCrates") {
 		@Override
-		public Item getTabIconItem()
+		public ItemStack getTabIconItem()
 		{
-			return Item.getItemFromBlock(RRCBlocks.crate);
+			return new ItemStack(RRCBlocks.CRATE);
 		}
 	};
 	

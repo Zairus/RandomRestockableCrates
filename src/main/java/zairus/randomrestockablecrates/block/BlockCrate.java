@@ -1,7 +1,5 @@
 package zairus.randomrestockablecrates.block;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
@@ -76,7 +74,7 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
 		if (world.isRemote)
 		{
@@ -191,11 +189,11 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
 	{
-		EnumFacing enumfacing = EnumFacing.getHorizontal(MathHelper.floor_double((double)(placer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3).getOpposite();
+		EnumFacing enumfacing = EnumFacing.getHorizontal(MathHelper.floor((double)(placer.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3).getOpposite();
         state = state.withProperty(FACING, enumfacing).withProperty(OPEN, false);
         world.setBlockState(pos, state, 3);
 	}
-	
+	/*
 	@Override
 	public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
 	{
@@ -203,7 +201,7 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 				.withProperty(FACING, placer.getHorizontalFacing())
 				.withProperty(OPEN, false);
 	}
-	
+	*/
 	@Override
 	public void onBlockDestroyedByPlayer(World world, BlockPos pos, IBlockState state)
 	{

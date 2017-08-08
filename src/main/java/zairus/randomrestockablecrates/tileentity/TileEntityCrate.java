@@ -99,7 +99,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		if (this.chestContents[index] != null)
 		{
-			if (this.chestContents[index].stackSize <= count)
+			if (this.chestContents[index].getCount() <= count)
 			{
 				ItemStack itemstack1 = this.chestContents[index];
                 this.chestContents[index] = null;
@@ -110,7 +110,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			{
 				ItemStack itemstack = this.chestContents[index].splitStack(count);
 				
-                if (this.chestContents[index].stackSize == 0)
+                if (this.chestContents[index].getCount() == 0)
                 {
                     this.chestContents[index] = null;
                 }
@@ -145,9 +145,9 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		this.chestContents[index] = stack;
 		
-        if (stack != null && stack.stackSize > this.getInventoryStackLimit())
+        if (stack != null && stack.getCount() > this.getInventoryStackLimit())
         {
-            stack.stackSize = this.getInventoryStackLimit();
+            stack.setCount(this.getInventoryStackLimit());
         }
         
         this.markDirty();
@@ -157,12 +157,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	public int getInventoryStackLimit()
 	{
 		return 64;
-	}
-	
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player)
-	{
-		return true;
 	}
 	
 	@Override
@@ -176,15 +170,15 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			}
 			
 			++this.playersUsing;
-			this.worldObj.addBlockEvent(this.pos, this.getBlockType(), 1, this.playersUsing);
-			this.worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-			this.worldObj.notifyNeighborsOfStateChange(this.pos.down(), this.getBlockType());
+			this.world.addBlockEvent(this.pos, this.getBlockType(), 1, this.playersUsing);
+			this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
+			this.world.notifyNeighborsOfStateChange(this.pos.down(), this.getBlockType(), true);
 		}
 		
 		if (!this.open)
 			this.lastOpened = this.worldTicks;
 		
-		this.worldObj.playSound((EntityPlayer)null, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f));
+		this.world.playSound((EntityPlayer)null, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (this.world.rand.nextFloat() * 0.2f + 0.9f));
 		this.open = true;
 		
 		updateMe();
@@ -233,9 +227,9 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 				this.firstTime = false;
 				this.lastOpened = worldTicks;
 				
-				this.worldObj.playSound((EntityPlayer)null, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (this.worldObj.rand.nextFloat() * 0.2f + 0.9f));
+				this.world.playSound((EntityPlayer)null, pos, RRCSoundEvents.CRATE_OPEN, SoundCategory.BLOCKS, 1.0F, 1.2F / (this.world.rand.nextFloat() * 0.2f + 0.9f));
 				
-				restock(this.worldObj.rand);
+				restock(this.world.rand);
 			}
 			
 			updateMe();
@@ -321,9 +315,9 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		if (!player.isSpectator() && this.getBlockType() instanceof BlockChest)
 		{
 			--this.playersUsing;
-			this.worldObj.addBlockEvent(this.pos, this.getBlockType(), 1, this.playersUsing);
-			this.worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
-			this.worldObj.notifyNeighborsOfStateChange(this.pos.down(), this.getBlockType());
+			this.world.addBlockEvent(this.pos, this.getBlockType(), 1, this.playersUsing);
+			this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), true);
+			this.world.notifyNeighborsOfStateChange(this.pos.down(), this.getBlockType(), true);
 		}
 	}
 	
@@ -346,7 +340,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			
 			if (j >= 0 && j < this.chestContents.length)
 			{
-				this.chestContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+				this.chestContents[j] = new ItemStack(nbttagcompound);
 			}
 		}
 		
@@ -501,7 +495,27 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		this.markDirty();
 		
-		IBlockState state = this.worldObj.getBlockState(getPos());
-		this.worldObj.notifyBlockUpdate(getPos(), state, state, 0);
+		IBlockState state = this.world.getBlockState(getPos());
+		this.world.notifyBlockUpdate(getPos(), state, state, 0);
+	}
+	
+	@Override
+	public boolean isEmpty()
+	{
+		boolean isEmpty = true;
+		
+		for (ItemStack stack : this.chestContents)
+		{
+			if (stack != null)
+				isEmpty = false;
+		}
+		
+		return isEmpty;
+	}
+	
+	@Override
+	public boolean isUsableByPlayer(EntityPlayer player)
+	{
+		return true;
 	}
 }

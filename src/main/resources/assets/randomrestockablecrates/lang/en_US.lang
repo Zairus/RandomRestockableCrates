@@ -1,5 +1,5 @@
 itemGroup.RandomCrates=Random Restockable Crates
-tile.BlockCrate1.name=Random Crate Tier 1
-tile.BlockCrate2.name=Random Crate Tier 2
-tile.BlockCrate3.name=Random Crate Tier 3
-tile.BlockCrate4.name=Random Crate Tier 4
+tile.blockcrate1.name=Random Crate Tier 1
+tile.blockcrate2.name=Random Crate Tier 2
+tile.blockcrate3.name=Random Crate Tier 3
+tile.blockcrate4.name=Random Crate Tier 4

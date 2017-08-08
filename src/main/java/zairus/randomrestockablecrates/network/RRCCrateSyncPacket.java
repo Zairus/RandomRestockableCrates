@@ -67,7 +67,7 @@ public class RRCCrateSyncPacket extends AbstractPacket
 	
 	private void doSync(EntityPlayer player)
 	{
-		TileEntity tileEntity = player.worldObj.getTileEntity(new BlockPos(x, y, z));
+		TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
 		
 		if (tileEntity instanceof TileEntityCrate)
 		{

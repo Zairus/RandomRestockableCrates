@@ -151,7 +151,7 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 	@SideOnly(Side.CLIENT)
 	private EntityPlayer getClientPlayer()
 	{
-		return Minecraft.getMinecraft().thePlayer;
+		return Minecraft.getMinecraft().player;
 	}
 	
 	public void sendToAll(AbstractPacket message)
