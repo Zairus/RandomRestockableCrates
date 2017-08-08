@@ -26,6 +26,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import zairus.randomrestockablecrates.RandomRestockableCrates;
+import zairus.randomrestockablecrates.gui.GuiHandler;
 import zairus.randomrestockablecrates.tileentity.TileEntityCrate;
 
 public class BlockCrate extends BlockContainer implements ITileEntityProvider
@@ -86,13 +87,13 @@ public class BlockCrate extends BlockContainer implements ITileEntityProvider
 			
 			if (ilockablecontainer != null)
 			{
-				player.openGui(RandomRestockableCrates.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
+				player.openGui(RandomRestockableCrates.instance, GuiHandler.GUI_CRATE_ID, world, pos.getX(), pos.getY(), pos.getZ());
 				
 				return true;
 			}
 		}
 		
-		return true;
+		return false;
 	}
 	
 	@Override

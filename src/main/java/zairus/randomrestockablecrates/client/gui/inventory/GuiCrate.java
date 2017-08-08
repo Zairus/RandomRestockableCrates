@@ -21,6 +21,7 @@ public class GuiCrate extends GuiContainer
 	public GuiCrate(IInventory inventorySlots)
 	{
 		super(new ContainerCrate(Minecraft.getMinecraft().player.inventory, inventorySlots, Minecraft.getMinecraft().player));
+		
 		this.inventory = inventorySlots;
 	}
 	

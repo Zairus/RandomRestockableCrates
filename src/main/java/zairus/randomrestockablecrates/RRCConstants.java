@@ -8,6 +8,4 @@ public class RRCConstants
 	
 	public static final String MOD_COMMON_PROXY = "zairus.randomrestockablecrates.proxy.CommonProxy";
 	public static final String MOD_CLIENT_PROXY = "zairus.randomrestockablecrates.proxy.ClientProxy";
-	
-	public static final int GUI_CRATE_ID = 0;
 }

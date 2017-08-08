@@ -31,10 +31,10 @@ public class ContainerCrate extends Container
 			}
 		}
 		
-        for (int i1 = 0; i1 < 9; ++i1)
-        {
-            this.addSlotToContainer(new Slot(playerInventory, i1, 7 + i1 * 18, 149));
-        }
+		for (int i1 = 0; i1 < 9; ++i1)
+		{
+			this.addSlotToContainer(new Slot(playerInventory, i1, 7 + i1 * 18, 149));
+		}
 	}
 	
 	@Override
@@ -53,7 +53,7 @@ public class ContainerCrate extends Container
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
 	{
-		ItemStack itemstack = null;
+		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = (Slot)this.inventorySlots.get(index);
 		
 		if (slot != null && slot.getHasStack())
@@ -65,17 +65,17 @@ public class ContainerCrate extends Container
 			{
 				if (!this.mergeItemStack(itemstack1, 9, this.inventorySlots.size(), true))
 				{
-					return null;
+					return ItemStack.EMPTY;
 				}
 			}
 			else if (!this.mergeItemStack(itemstack1, 0, 9, false))
 			{
-				return null;
+				return ItemStack.EMPTY;
 			}
 			
 			if (itemstack1.getCount() == 0)
             {
-                slot.putStack((ItemStack)null);
+                slot.putStack(ItemStack.EMPTY);
             }
             else
             {

@@ -21,7 +21,7 @@ import zairus.randomrestockablecrates.proxy.CommonProxy;
 @Mod(modid = RRCConstants.MODID, name = RRCConstants.NAME, version = RRCConstants.VERSION)
 public class RandomRestockableCrates
 {
-	public static Logger logger;
+	private static Logger logger;
 	
 	@SidedProxy(clientSide = RRCConstants.MOD_CLIENT_PROXY, serverSide = RRCConstants.MOD_COMMON_PROXY)
 	public static CommonProxy proxy;
@@ -72,5 +72,10 @@ public class RandomRestockableCrates
 	{
 		RandomRestockableCrates.proxy.postInit(event);
 		packetPipeline.postInitialise();
+	}
+	
+	public static void log(String message)
+	{
+		logger.info(message);
 	}
 }

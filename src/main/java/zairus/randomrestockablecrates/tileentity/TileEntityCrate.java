@@ -97,12 +97,12 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	@Override
 	public ItemStack decrStackSize(int index, int count)
 	{
-		if (this.chestContents[index] != null)
+		if (this.chestContents[index] != null && this.chestContents[index] != ItemStack.EMPTY)
 		{
 			if (this.chestContents[index].getCount() <= count)
 			{
 				ItemStack itemstack1 = this.chestContents[index];
-                this.chestContents[index] = null;
+                this.chestContents[index] = ItemStack.EMPTY;
                 this.markDirty();
                 return itemstack1;
 			}
@@ -112,7 +112,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 				
                 if (this.chestContents[index].getCount() == 0)
                 {
-                    this.chestContents[index] = null;
+                    this.chestContents[index] = ItemStack.EMPTY;
                 }
                 
                 this.markDirty();
@@ -121,22 +121,22 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		}
 		else
 		{
-			return null;
+			return ItemStack.EMPTY;
 		}
 	}
 	
 	@Override
 	public ItemStack removeStackFromSlot(int index)
 	{
-		if (this.chestContents[index] != null)
+		if (this.chestContents[index] != null && !this.chestContents[index].isEmpty())
         {
             ItemStack itemstack = this.chestContents[index];
-            this.chestContents[index] = null;
+            this.chestContents[index] = ItemStack.EMPTY;
             return itemstack;
         }
         else
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 	}
 	
@@ -145,7 +145,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		this.chestContents[index] = stack;
 		
-        if (stack != null && stack.getCount() > this.getInventoryStackLimit())
+        if (!stack.isEmpty() && stack.getCount() > this.getInventoryStackLimit())
         {
             stack.setCount(this.getInventoryStackLimit());
         }
@@ -247,12 +247,12 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		
 		for (int i = 0; i < this.chestContents.length; ++i)
 		{
-			this.chestContents[i] = null;
+			this.chestContents[i] = ItemStack.EMPTY;
 			if (rand.nextInt(6) == 0)
 			{
 				this.chestContents[i] = getStackFromPool(tierPools[tier], rand);
 				
-				if (this.chestContents[i] != null)
+				if (this.chestContents[i] != null && !this.chestContents[i].isEmpty())
 					addedItem = true;
 			}
 		}
@@ -279,7 +279,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	
 	private ItemStack getStackFromPool(NBTTagList list, Random rand)
 	{
-		ItemStack stack = null;
+		ItemStack stack = ItemStack.EMPTY;
 		
 		NBTTagCompound curElement = list.getCompoundTagAt(rand.nextInt(list.tagCount()));
 		
@@ -359,7 +359,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		
 		for (int i = 0; i < this.chestContents.length; ++i)
 		{
-			if (this.chestContents[i] != null)
+			if (this.chestContents[i] != null && !this.chestContents[i].isEmpty())
 			{
 				NBTTagCompound nbttagcompound = new NBTTagCompound();
 				nbttagcompound.setByte("Slot", (byte)i);
@@ -419,7 +419,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	{
 		for (int i = 0; i < this.chestContents.length; ++i)
 		{
-			this.chestContents[i] = null;
+			this.chestContents[i] = ItemStack.EMPTY;
 		}
 	}
 	
@@ -506,7 +506,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		
 		for (ItemStack stack : this.chestContents)
 		{
-			if (stack != null)
+			if (stack != null && !stack.isEmpty())
 				isEmpty = false;
 		}
 		
