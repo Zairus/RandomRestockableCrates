@@ -1,5 +1,5 @@
 {
-    "parent": "randomrestockablecrates:block/BlockCrate1",
+    "parent": "randomrestockablecrates:block/blockcrate4",
     "display": {
         "gui": {
             "rotation": [ 30, -135, 0 ],
