@@ -27,9 +27,10 @@ public class CommonProxy
 		;
 	}
 	
-	public void registerItem(Item item, String name)
+	public void registerItem(Item item, String name, int meta, boolean model)
 	{
-		GameRegistry.register(item);
+		if (meta == 0)
+			GameRegistry.register(item);
 	}
 	
 	public void registerItemModel(Item item, int meta)
@@ -53,7 +54,7 @@ public class CommonProxy
 	public void registerBlock(Block block, Class <? extends ItemBlock> clazz, boolean model, String name)
 	{
 		GameRegistry.register(block);
-		registerItem(new ItemBlock(block).setRegistryName(new ResourceLocation(RRCConstants.MODID, name)), name);
+		registerItem(new ItemBlock(block).setRegistryName(new ResourceLocation(RRCConstants.MODID, name)), name, 0, model);
 	}
 	
 	public void registerBlockModel(Block block, int metadata, String modName)

@@ -6,4 +6,15 @@
 			,{"name": "randomrestockablecrates:crate2", "stream": false}
 		]
 	}
+	,"reward_case": {
+		"category": "master"
+		,"sounds": [
+			{"name": "randomrestockablecrates:reward_case1", "stream": false}
+			,{"name": "randomrestockablecrates:reward_case2", "stream": false}
+			,{"name": "randomrestockablecrates:reward_case3", "stream": false}
+			,{"name": "randomrestockablecrates:reward_case4", "stream": false}
+			,{"name": "randomrestockablecrates:reward_case5", "stream": false}
+			,{"name": "randomrestockablecrates:reward_case6", "stream": false}
+		]
+	}
 }

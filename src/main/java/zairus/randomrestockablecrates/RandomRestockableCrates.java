@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import zairus.randomrestockablecrates.block.RRCBlocks;
 import zairus.randomrestockablecrates.event.RRCEventHandler;
 import zairus.randomrestockablecrates.gui.GuiHandler;
+import zairus.randomrestockablecrates.item.RRCItems;
 import zairus.randomrestockablecrates.network.PacketPipeline;
 import zairus.randomrestockablecrates.proxy.CommonProxy;
 
@@ -46,8 +47,6 @@ public class RandomRestockableCrates
 		
 		RRCConfig.init(event.getSuggestedConfigurationFile());
 		
-		RRCBlocks.init();
-		
 		RandomRestockableCrates.proxy.preInit(event);
 	}
 	
@@ -59,6 +58,8 @@ public class RandomRestockableCrates
 		RandomRestockableCrates.proxy.init(event);
 		packetPipeline.initalise();
 		
+		RRCItems.register();
+		RRCBlocks.init();
 		RRCBlocks.initModels();
 		
 		MinecraftForge.EVENT_BUS.register(eventHandler);

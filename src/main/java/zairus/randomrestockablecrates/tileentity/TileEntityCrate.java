@@ -8,10 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -23,6 +20,7 @@ import net.minecraft.world.World;
 import zairus.randomrestockablecrates.RRCConfig;
 import zairus.randomrestockablecrates.inventory.ContainerCrate;
 import zairus.randomrestockablecrates.sound.RRCSoundEvents;
+import zairus.randomrestockablecrates.util.RRCUtils;
 
 public class TileEntityCrate extends TileEntityLockable implements ITickable, IInventory
 {
@@ -256,7 +254,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 			this.chestContents[i] = null;
 			if (rand.nextInt(6) == 0)
 			{
-				this.chestContents[i] = getStackFromPool(tierPools[tier], rand);
+				this.chestContents[i] = RRCUtils.getStackFromPool(tierPools[tier], rand);
 				
 				if (this.chestContents[i] != null)
 					addedItem = true;
@@ -265,7 +263,7 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 		
 		if (!addedItem)
 		{
-			this.chestContents[rand.nextInt(this.chestContents.length)] = getStackFromPool(tierPools[tier], rand);
+			this.chestContents[rand.nextInt(this.chestContents.length)] = RRCUtils.getStackFromPool(tierPools[tier], rand);
 		}
 		
 		this.markDirty();
@@ -281,38 +279,6 @@ public class TileEntityCrate extends TileEntityLockable implements ITickable, II
 	public boolean getIsOpen()
 	{
 		return this.open;
-	}
-	
-	private ItemStack getStackFromPool(NBTTagList list, Random rand)
-	{
-		ItemStack stack = null;
-		
-		NBTTagCompound curElement = list.getCompoundTagAt(rand.nextInt(list.tagCount()));
-		
-		if (curElement != null)
-		{
-			int amount = curElement.getInteger("max") - curElement.getInteger("min");
-			amount = rand.nextInt(amount + 1) + curElement.getInteger("min");
-			if (amount == 0)
-				amount = 1;
-			
-			stack = new ItemStack(Item.getByNameOrId(curElement.getString("itemId")), amount, curElement.getInteger("meta"));
-			
-			NBTTagCompound tag = null;
-			
-			if (curElement.hasKey("NBTData") && curElement.getString("NBTData") != null && curElement.getString("NBTData").length() > 0)
-			{
-				try {
-					tag = JsonToNBT.getTagFromJson(curElement.getString("NBTData"));
-				} catch (NBTException e) {
-				}
-				
-				if (tag != null)
-					stack.setTagCompound(tag);
-			}
-		}
-		
-		return stack;
 	}
 	
 	@Override

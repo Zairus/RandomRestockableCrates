@@ -7,6 +7,7 @@ import zairus.randomrestockablecrates.RRCConstants;
 public class RRCSoundEvents
 {
 	public static SoundEvent CRATE_OPEN;
+	public static SoundEvent REWARD_CASE;
 	
 	private static int lastSoundId = -1;
 	
@@ -44,5 +45,6 @@ public class RRCSoundEvents
 		setLastID();
 		
 		CRATE_OPEN = registerSound("crate_open");
+		REWARD_CASE = registerSound("reward_case");
 	}
 }

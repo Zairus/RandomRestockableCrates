@@ -2,6 +2,7 @@ package zairus.randomrestockablecrates.proxy;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -38,9 +39,25 @@ public class ClientProxy extends CommonProxy
 	}
 	
 	@Override
-	public void registerItem(Item item, String name)
+	public void registerItem(Item item, String name, int meta, boolean model)
 	{
-		super.registerItem(item, name);
+		super.registerItem(item, name, meta, model);
+		
+		if (model && item != null)
+		{
+			registerModel(item, meta, name);
+		}
+	}
+	
+	public void registerModel(Item item, int meta, String name)
+	{
+		RenderItem renderItem = mc.getRenderItem();
+		ModelResourceLocation modelResourceLocation = new ModelResourceLocation(RRCConstants.MODID + ":" + name, "inventory");
+		
+		renderItem.getItemModelMesher().register(item, meta, modelResourceLocation);
+		
+		if (meta == 0)
+			ModelBakery.registerItemVariants(item, new ResourceLocation(RRCConstants.MODID, name));
 	}
 	
 	@Override
